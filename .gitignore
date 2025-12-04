@@ -1,4 +1,4 @@
-__pycache__/
+_pycache_/
 *.pyc
 *.pyo
 .env
@@ -12,3 +12,5 @@ coverage/
 
 *.class
 
+stroke_project.db
+.vscode/

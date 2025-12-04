@@ -1,0 +1,121 @@
+<style>
+  .flash-container {
+    position: fixed;
+    top: 100px;
+    right: 20px;
+    z-index: 9999;
+    max-width: 400px;
+    pointer-events: none;
+  }
+
+  .flash-alert {
+    margin-bottom: 12px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+    animation: slideInRight 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    backdrop-filter: blur(10px);
+    font-weight: 500;
+    pointer-events: all;
+  }
+
+  .flash-alert.alert-success {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+
+  .flash-alert.alert-danger {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+  }
+
+  .flash-alert.alert-warning {
+    background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
+    color: #5a4a42;
+  }
+
+  .flash-alert.alert-info {
+    background: linear-gradient(135deg, #a1c4fd 0%, #c2e9fb 100%);
+    color: #2c5282;
+  }
+
+  @keyframes slideInRight {
+    from {
+      opacity: 0;
+      transform: translateX(120%) scale(0.9);
+    }
+    to {
+      opacity: 1;
+      transform: translateX(0) scale(1);
+    }
+  }
+
+  .flash-alert i {
+    font-size: 1.15rem;
+    margin-right: 8px;
+    vertical-align: middle;
+  }
+
+  .flash-alert .btn-close {
+    filter: brightness(0) invert(1);
+    opacity: 0.8;
+    transition: opacity 0.2s;
+  }
+
+  .flash-alert .btn-close:hover {
+    opacity: 1;
+  }
+
+  .flash-alert.alert-warning .btn-close,
+  .flash-alert.alert-info .btn-close {
+    filter: none;
+    opacity: 0.6;
+  }
+
+  .flash-alert.alert-warning .btn-close:hover,
+  .flash-alert.alert-info .btn-close:hover {
+    opacity: 1;
+  }
+
+  @media (max-width: 576px) {
+    .flash-container {
+      right: 10px;
+      left: 10px;
+      max-width: none;
+    }
+
+    .flash-alert {
+      font-size: 0.9rem;
+      padding: 14px 16px;
+    }
+  }
+</style>
+
+{% with messages = get_flashed_messages(with_categories=true) %} {% if messages
+%}
+<div class="flash-container">
+  {% for category, message in messages %}
+  <div
+    class="alert alert-{{ category }} alert-dismissible fade show flash-alert"
+    role="alert"
+  >
+    {% if category == 'success' %}
+    <i class="fas fa-check-circle"></i>
+    {% elif category == 'danger' %}
+    <i class="fas fa-exclamation-circle"></i>
+    {% elif category == 'warning' %}
+    <i class="fas fa-exclamation-triangle"></i>
+    {% elif category == 'info' %}
+    <i class="fas fa-info-circle"></i>
+    {% endif %} {{ message }}
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="alert"
+      aria-label="Close"
+    ></button>
+  </div>
+  {% endfor %}
+</div>
+{% endif %} {% endwith %}
