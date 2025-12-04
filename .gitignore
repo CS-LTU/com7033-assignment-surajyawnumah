@@ -1,0 +1,14 @@
+__pycache__/
+*.pyc
+*.pyo
+.env
+venv/
+dist/
+build/
+*.log
+coverage/
+*.sqlite3
+.idea/
+
+*.class
+
