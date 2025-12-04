@@ -1,8 +1,9 @@
 import sqlite3
-from werkzeug.security import generate_password_hash
+from werkzeug.security import generate_password_hash, check_password_hash
 
 class User:
-    def __init__(self, first_name, last_name, email, role, password_hash):
+    def __init__(self, id, first_name, last_name, email, role, password_hash):
+        self.id = id
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
@@ -37,3 +38,16 @@ class User:
         conn.commit()
         conn.close()
         return True
+    
+    @staticmethod
+    def authenticate_user(email, password):
+        conn = sqlite3.connect('stroke_project.db')
+        cursor = conn.cursor()
+        
+        cursor.execute('SELECT id, first_name, last_name, email, role, password_hash FROM users WHERE email = ?', (email,))
+        result = cursor.fetchone()
+        conn.close()
+        
+        if result and check_password_hash(result[5], password):
+            return User(*result)
+        return None

@@ -12,6 +12,8 @@
     top: 0;
     left: 0;
     padding: 40px 20px;
+    display: flex;
+    flex-direction: column;
   }
   .sidebar a {
     color: white;
@@ -71,6 +73,9 @@
 <div class="sidebar">
   <h3 class="text-center mb-4">StrokePred</h3>
   <a href="#" class="fw-bold">Patient Management</a>
+  <a href="{{ url_for('logout') }}" class="mt-auto"
+    ><i class="fas fa-sign-out-alt me-2"></i>Logout</a
+  >
 </div>
 
 <div class="content-area">

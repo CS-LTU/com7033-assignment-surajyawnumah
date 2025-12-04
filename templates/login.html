@@ -310,7 +310,6 @@
 
     <div class="login-container">
         <div class="login-card">
-            <!-- Header -->
             <div class="login-header">
                 <div class="login-brand">
                     <i class="fas fa-heartbeat me-2"></i>StrokePred
@@ -320,24 +319,22 @@
                 </div>
             </div>
 
-            <!-- Login Form -->
             <div class="login-body">
                 <h2 class="text-center mb-4">Welcome Back</h2>
                 <p class="text-center text-muted mb-4">Sign in to your account to continue</p>
-                <form action="{{url_for('patient_managment')}}" id="loginForm" novalidate>
-                    <!-- Username Field -->
+                <form method="POST" action="{{ url_for('login') }}" id="loginForm">
                     <div class="form-group">
                         <div class="form-floating">
                             <input 
-                                type="text" 
+                                type="email" 
                                 class="form-control" 
-                                id="username" 
-                                name="username"
-                                placeholder="Enter your username"
+                                id="email" 
+                                name="email"
+                                placeholder="Enter your email"
                                 required
-                                autocomplete="username"
+                                autocomplete="email"
                             >
-                            <label for="username">
+                            <label for="email">
                                 <i class="fas fa-user me-2"></i>Email
                             </label>
                             <div class="invalid-feedback">
@@ -346,7 +343,6 @@
                         </div>
                     </div>
 
-                    <!-- Password Field -->
                     <div class="form-group">
                         <div class="form-floating position-relative">
                             <input 
@@ -368,7 +364,6 @@
                         </div>
                     </div>
 
-                    <!-- Submit Button -->
                     <button type="submit" class="btn btn-login w-100" id="loginButton">
                         <span class="loading-spinner" id="loadingSpinner"></span>
                         <span id="buttonText">Sign In</span>
@@ -376,7 +371,6 @@
                 </form>
               
 
-            <!-- Footer -->
 
         </div>
     </div>

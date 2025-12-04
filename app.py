@@ -1,4 +1,4 @@
-from flask import render_template, Flask, request, flash, redirect, url_for
+from flask import render_template, Flask, request, flash, redirect, url_for, session
 from models.user import User
 from init_db import init_database
 import re
@@ -23,9 +23,29 @@ def about():
 
 # Route for login page
 
-@app.route('/login')
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    """Render the login page."""
+    if request.method == 'POST':
+        try:
+            email = request.form.get('email', '').strip().lower()
+            password = request.form.get('password', '')
+            
+            if not email or not password:
+                raise ValueError('Email and password are required')
+            
+            user = User.authenticate_user(email, password)
+            
+            if user:
+                session['user_id'] = user.id
+                flash(f'Welcome back, {user.first_name}!', 'success')
+                return redirect(url_for('patient_managment'))
+            else:
+                raise ValueError('Invalid email or password')
+                
+        except Exception as e:
+            flash(f'Login failed: {str(e)}', 'danger')
+            return render_template('login.html')
+    
     return render_template('login.html')
 
 # Route for registration page
@@ -75,6 +95,12 @@ def register():
 def patient_managment():
     """Render the patient management page."""
     return render_template('patient_management.html')
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    flash('You have been logged out successfully', 'info')
+    return redirect(url_for('login'))
 
 # Main execution
 if __name__ == '__main__':
