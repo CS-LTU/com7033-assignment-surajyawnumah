@@ -79,11 +79,19 @@
 </div>
 
 <div class="content-area">
-  <h2 class="mb-4">Welcome!</h2>
+  <h3 class="mb-4">Welcome!</h3>
   <div class="card card-shadow p-3 bg-white">
     <div class="d-flex justify-content-between align-items-center mb-3">
       <h5 class="m-0">Patients</h5>
-      <button class="btn btn-add btn-sm text-white">Add Patient</button>
+      {% if user_role == 'admin' %}
+      <button
+        class="btn btn-add btn-sm text-white"
+        data-bs-toggle="modal"
+        data-bs-target="#addPatientModal"
+      >
+        Add Patient
+      </button>
+      {% endif %}
     </div>
     <table class="table table-hover">
       <thead class="table-light border-0">
@@ -97,32 +105,185 @@
         </tr>
       </thead>
       <tbody>
+        {% if patients %} {% for patient in patients %}
         <tr>
-          <td>1</td>
-          <td>John</td>
-          <td>Doe</td>
-          <td>john@example.com</td>
-          <td>Male</td>
+          <td>{{ patient.id }}</td>
+          <td>{{ patient.first_name }}</td>
+          <td>{{ patient.last_name }}</td>
+          <td>{{ patient.email }}</td>
+          <td>{{ patient.gender }}</td>
           <td class="table-actions">
-            <button class="btn btn-sm btn-view">View</button>
-            <button class="btn btn-sm btn-edit">Edit</button>
-            <button class="btn btn-sm btn-delete">Delete</button>
+            {% if user_role == 'admin' %}
+            <button
+              type="button"
+              class="btn btn-sm btn-danger"
+              data-bs-toggle="modal"
+              data-bs-target="#deleteModal{{ patient.id }}"
+            >
+              Delete
+            </button>
+            {% elif user_role == 'doctor' %}
+            <a
+              href="{{ url_for('edit_patient', patient_id=patient.id) }}"
+              class="btn btn-sm btn-edit"
+              >Edit</a
+            >
+            {% endif %}
           </td>
         </tr>
+        {% endfor %} {% else %}
         <tr>
-          <td>2</td>
-          <td>Jane</td>
-          <td>Smith</td>
-          <td>jane@example.com</td>
-          <td>Female</td>
-          <td class="table-actions">
-            <button class="btn btn-sm btn-view">View</button>
-            <button class="btn btn-sm btn-edit">Edit</button>
-            <button class="btn btn-sm btn-delete">Delete</button>
+          <td colspan="6" class="text-center text-muted py-4">
+            No patients available
           </td>
         </tr>
+        {% endif %}
       </tbody>
     </table>
+  </div>
+</div>
+
+{% if patients %} {% for patient in patients %}
+<div
+  class="modal fade"
+  id="deleteModal{{ patient.id }}"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div
+        class="modal-header"
+        style="
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+        "
+      >
+        <h5 class="modal-title">Confirm Delete</h5>
+      </div>
+      <div class="modal-body">
+        <p>
+          Are you sure you want to delete patient
+          <strong>{{ patient.first_name }} {{ patient.last_name }}</strong>?
+        </p>
+        <p class="text-muted mb-0">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+          Cancel
+        </button>
+        <form
+          action="{{ url_for('delete_patient', patient_id=patient.id) }}"
+          method="POST"
+          style="display: inline"
+        >
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+{% endif %}
+
+<div
+  class="modal fade"
+  id="addPatientModal"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+>
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div
+        class="modal-header"
+        style="
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+        "
+      >
+        <h5 class="modal-title" id="addPatientModalLabel">Add New Patient</h5>
+      </div>
+      <form method="POST" action="{{ url_for('add_patient') }}">
+        <div class="modal-body">
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="firstName" class="form-label"
+                >First Name <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="firstName"
+                name="first_name"
+                required
+              />
+            </div>
+            <div class="col-md-6">
+              <label for="lastName" class="form-label"
+                >Last Name <span class="text-danger">*</span></label
+              >
+              <input
+                type="text"
+                class="form-control"
+                id="lastName"
+                name="last_name"
+                required
+              />
+            </div>
+          </div>
+
+          <div class="row mb-3">
+            <div class="col-md-6">
+              <label for="gender" class="form-label"
+                >Gender <span class="text-danger">*</span></label
+              >
+              <select class="form-select" id="gender" name="gender" required>
+                <option value="">Select gender</option>
+                <option value="Male">Male</option>
+                <option value="Female">Female</option>
+                <option value="Other">Other</option>
+              </select>
+            </div>
+            <div class="col-md-6">
+              <label for="dateOfBirth" class="form-label"
+                >Date of Birth <span class="text-danger">*</span></label
+              >
+              <input
+                type="date"
+                class="form-control"
+                id="dateOfBirth"
+                name="date_of_birth"
+                required
+              />
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="email" class="form-label"
+              >Email Address <span class="text-danger">*</span></label
+            >
+            <input
+              type="email"
+              class="form-control"
+              id="email"
+              name="email"
+              required
+            />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-add">Create</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
 {% endblock %}
