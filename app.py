@@ -16,7 +16,23 @@ app.secret_key = Config.SECRET_KEY
 
 init_database()
 
-# Route for home page
+def get_current_user():
+    """Return the logged-in User object or None."""
+    user_id = session.get('user_id')
+    if not user_id:
+        return None
+    try:
+        # adjust method name if your User model uses a different finder
+        return User.get_user_by_id(user_id)
+    except Exception:
+        return None
+
+@app.context_processor
+def inject_user():
+    if 'user_id' in session:
+        user = User.get_user_by_id(session['user_id'])
+        return dict(current_user=user)
+    return dict(current_user=None)
 
 @app.route('/')
 def home():

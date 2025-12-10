@@ -51,3 +51,14 @@ class User:
         if result and check_password_hash(result[5], password):
             return User(*result)
         return None
+    
+    @staticmethod
+    def get_user_by_id(user_id):
+        conn = sqlite3.connect('stroke_project.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT id, first_name, last_name, email, role, password_hash FROM users WHERE id = ?', (user_id,))
+        result = cursor.fetchone()
+        conn.close()
+        if result:
+            return User(*result)
+        return None
