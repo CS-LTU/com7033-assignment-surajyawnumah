@@ -189,29 +189,143 @@
           </tr>
         </thead>
         <tbody>
+          {% if allergies %}
+          {% for allergy in allergies %}
           <tr>
-            <td>Peanuts</td>
-            <td><span class="badge bg-danger">Severe</span></td>
-            <td>2024-01-15</td>
+            <td>{{ allergy.allergen }}</td>
+            <td>
+              {% if allergy.severity == 'Severe' %}
+              <span class="badge bg-danger">Severe</span>
+              {% elif allergy.severity == 'Moderate' %}
+              <span class="badge bg-warning">Moderate</span>
+              {% else %}
+              <span class="badge bg-info">Mild</span>
+              {% endif %}
+            </td>
+            <td>{{ allergy.date_added }}</td>
             <td class="table-actions">
-              <button class="btn btn-sm btn-edit">Edit</button>
-              <button class="btn btn-sm btn-delete">Delete</button>
+              <button class="btn btn-sm btn-edit" data-bs-toggle="modal" data-bs-target="#editAllergyModal{{ allergy._id }}">Edit</button>
+              <button class="btn btn-sm btn-delete" data-bs-toggle="modal" data-bs-target="#deleteAllergyModal{{ allergy._id }}">Delete</button>
             </td>
           </tr>
+          {% endfor %}
+          {% else %}
           <tr>
-            <td>Penicillin</td>
-            <td><span class="badge bg-warning">Moderate</span></td>
-            <td>2024-02-20</td>
-            <td class="table-actions">
-              <button class="btn btn-sm btn-edit">Edit</button>
-              <button class="btn btn-sm btn-delete">Delete</button>
-            </td>
+            <td colspan="4" class="text-center text-muted py-4">No allergies recorded</td>
           </tr>
+          {% endif %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card card-shadow">
+    <div
+      class="card-header-custom d-flex justify-content-between align-items-center"
+    >
+      <h5 class="m-0">Assessments</h5>
+      <button
+        class="btn btn-sm btn-light"
+        data-bs-toggle="modal"
+        data-bs-target="#addAssessmentModal"
+      >
+        <i class="fas fa-plus me-2"></i>New Assessment
+      </button>
+    </div>
+    <div class="card-body p-4">
+      <table class="table table-hover">
+        <thead class="table-light">
+          <tr>
+            <th>Hypertension</th>
+            <th>Married</th>
+            <th>Work Type</th>
+            <th>Residence</th>
+            <th>Glucose</th>
+            <th>BMI</th>
+            <th>Smoking</th>
+            <th>Stroke</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% if assessments %}
+          {% for assessment in assessments %}
+          <tr>
+            <td>{{ 'Yes' if assessment.hypertension == 1 else 'No' }}</td>
+            <td>{{ assessment.ever_married }}</td>
+            <td>{{ assessment.work_type }}</td>
+            <td>{{ assessment.residence_type }}</td>
+            <td>{{ assessment.avg_glucose_level }}</td>
+            <td>{{ assessment.bmi }}</td>
+            <td>{{ assessment.smoking_status }}</td>
+            <td>{{ 'Yes' if assessment.stroke == 1 else 'No' }}</td>
+          </tr>
+          {% endfor %}
+          {% else %}
+          <tr>
+            <td colspan="8" class="text-center text-muted py-4">No assessments recorded</td>
+          </tr>
+          {% endif %}
         </tbody>
       </table>
     </div>
   </div>
 </div>
+
+{% for allergy in allergies %}
+<div class="modal fade" id="editAllergyModal{{ allergy._id }}" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+        <h5 class="modal-title">Edit Allergy</h5>
+      </div>
+      <form method="POST" action="{{ url_for('update_allergy_route', patient_id=patient.id, allergy_id=allergy._id) }}">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label for="allergen{{ allergy._id }}" class="form-label">Allergen <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="allergen{{ allergy._id }}" name="allergen" value="{{ allergy.allergen }}" required />
+          </div>
+          <div class="mb-3">
+            <label for="severity{{ allergy._id }}" class="form-label">Severity <span class="text-danger">*</span></label>
+            <select class="form-select" id="severity{{ allergy._id }}" name="severity" required>
+              <option value="Mild" {% if allergy.severity == 'Mild' %}selected{% endif %}>Mild</option>
+              <option value="Moderate" {% if allergy.severity == 'Moderate' %}selected{% endif %}>Moderate</option>
+              <option value="Severe" {% if allergy.severity == 'Severe' %}selected{% endif %}>Severe</option>
+            </select>
+          </div>
+          <div class="mb-3">
+            <label for="dateAdded{{ allergy._id }}" class="form-label">Date Added <span class="text-danger">*</span></label>
+            <input type="date" class="form-control" id="dateAdded{{ allergy._id }}" name="date_added" value="{{ allergy.date_added }}" required />
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="submit" class="btn btn-update">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="deleteAllergyModal{{ allergy._id }}" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header" style="background: linear-gradient(135deg, #667eea, #764ba2); color: white;">
+        <h5 class="modal-title">Confirm Delete</h5>
+      </div>
+      <div class="modal-body">
+        <p>Are you sure you want to delete the allergy <strong>{{ allergy.allergen }}</strong>?</p>
+        <p class="text-muted mb-0">This action cannot be undone.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        <form action="{{ url_for('delete_allergy_route', patient_id=patient.id, allergy_id=allergy._id) }}" method="POST" style="display: inline;">
+          <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
 
 <div
   class="modal fade"
@@ -230,14 +344,8 @@
         "
       >
         <h5 class="modal-title" id="addAllergyModalLabel">Add Allergy</h5>
-        <button
-          type="button"
-          class="btn-close btn-close-white"
-          data-bs-dismiss="modal"
-          aria-label="Close"
-        ></button>
       </div>
-      <form>
+      <form method="POST" action="{{ url_for('add_allergy', patient_id=patient.id) }}">
         <div class="modal-body">
           <div class="mb-3">
             <label for="allergen" class="form-label"
@@ -284,6 +392,111 @@
             Cancel
           </button>
           <button type="submit" class="btn btn-add-allergy">Add Allergy</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div
+  class="modal fade"
+  id="addAssessmentModal"
+  tabindex="-1"
+  data-bs-backdrop="static"
+  data-bs-keyboard="false"
+>
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div
+        class="modal-header"
+        style="
+          background: linear-gradient(135deg, #667eea, #764ba2);
+          color: white;
+        "
+      >
+        <h5 class="modal-title">New Assessment</h5>
+      </div>
+      <form method="POST" action="{{ url_for('add_assessment', patient_id=patient.id) }}">
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="hypertension" class="form-label">Hypertension <span class="text-danger">*</span></label>
+              <select class="form-select" id="hypertension" name="hypertension" required>
+                <option value="">Select option</option>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="everMarried" class="form-label">Ever Married <span class="text-danger">*</span></label>
+              <select class="form-select" id="everMarried" name="ever_married" required>
+                <option value="">Select option</option>
+                <option value="No">No</option>
+                <option value="Yes">Yes</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="workType" class="form-label">Work Type <span class="text-danger">*</span></label>
+              <select class="form-select" id="workType" name="work_type" required>
+                <option value="">Select work type</option>
+                <option value="Children">Children</option>
+                <option value="Govt_job">Government Job</option>
+                <option value="Never_worked">Never Worked</option>
+                <option value="Private">Private</option>
+                <option value="Self-employed">Self-employed</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="residenceType" class="form-label">Residence Type <span class="text-danger">*</span></label>
+              <select class="form-select" id="residenceType" name="residence_type" required>
+                <option value="">Select residence type</option>
+                <option value="Rural">Rural</option>
+                <option value="Urban">Urban</option>
+              </select>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="avgGlucose" class="form-label">Average Glucose Level <span class="text-danger">*</span></label>
+              <input type="number" step="0.01" class="form-control" id="avgGlucose" name="avg_glucose_level" required />
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="bmi" class="form-label">BMI <span class="text-danger">*</span></label>
+              <input type="number" step="0.1" class="form-control" id="bmi" name="bmi" required />
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6 mb-3">
+              <label for="smokingStatus" class="form-label">Smoking Status <span class="text-danger">*</span></label>
+              <select class="form-select" id="smokingStatus" name="smoking_status" required>
+                <option value="">Select smoking status</option>
+                <option value="Formerly smoked">Formerly Smoked</option>
+                <option value="Never smoked">Never Smoked</option>
+                <option value="Smokes">Smokes</option>
+                <option value="Unknown">Unknown</option>
+              </select>
+            </div>
+            <div class="col-md-6 mb-3">
+              <label for="stroke" class="form-label">Stroke <span class="text-danger">*</span></label>
+              <select class="form-select" id="stroke" name="stroke" required>
+                <option value="">Select option</option>
+                <option value="0">No</option>
+                <option value="1">Yes</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            data-bs-dismiss="modal"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-add-allergy">Create Assessment</button>
         </div>
       </form>
     </div>

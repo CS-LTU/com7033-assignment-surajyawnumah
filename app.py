@@ -4,10 +4,15 @@ from models.patient import Patient
 from init_db import init_database
 from utils.decorators import auth_required, admin_required, doctor_required
 from utils.patient_utils import validate_patient, get_user_role
+from utils.mongo_validation import validate_allergy, validate_assessment
+from models.mongo.allergy_model import (get_allergies_by_patient_id, create_allergy, 
+                                        get_allergy_by_id, update_allergy, delete_allergy)
+from models.mongo.assessment_model import get_assessments_by_patient_id, create_assessment
+from config import Config
 import re
 
 app = Flask(__name__)
-app.secret_key = 'your-secret-key-change-this'
+app.secret_key = Config.SECRET_KEY
 
 init_database()
 
@@ -76,7 +81,7 @@ def register():
             if not re.match(email_pattern, email):
                 raise ValueError('Please enter a valid email address') 
         
-            pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$'
+            pattern = r'^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.\W).{8,}$'
             if not re.match(pattern, password):
                 raise ValueError('Password must be 8+ chars and include upper, lower, digit and special char.')
 
@@ -132,7 +137,11 @@ def edit_patient(patient_id):
     if not patient:
         flash('Patient not found', 'danger')
         return redirect(url_for('patient_managment'))
-    return render_template('edit_patient.html', patient=patient)
+    
+    allergies = get_allergies_by_patient_id(patient_id)
+    assessments = get_assessments_by_patient_id(patient_id)
+    
+    return render_template('edit_patient.html', patient=patient, allergies=allergies, assessments=assessments)
 
 # Route to update a patient
 
@@ -166,7 +175,67 @@ def delete_patient(patient_id):
         flash(f'Failed to delete patient: {str(e)}', 'danger')
     return redirect(url_for('patient_managment'))
 
-# Route to logout
+@app.route('/add-allergy/<int:patient_id>', methods=['POST'])
+@doctor_required
+def add_allergy(patient_id):
+    try:
+        allergen = request.form.get('allergen', '').strip()
+        severity = request.form.get('severity', '').strip()
+        date_added = request.form.get('date_added', '').strip()
+        
+        validate_allergy(allergen, severity, date_added)
+        create_allergy(patient_id, allergen, severity, date_added)
+        flash('Allergy added successfully', 'success')
+    except Exception as e:
+        flash(f'Failed to add allergy: {str(e)}', 'danger')
+    return redirect(url_for('edit_patient', patient_id=patient_id))
+
+@app.route('/update-allergy/<int:patient_id>/<allergy_id>', methods=['POST'])
+@doctor_required
+def update_allergy_route(patient_id, allergy_id):
+    try:
+        allergen = request.form.get('allergen', '').strip()
+        severity = request.form.get('severity', '').strip()
+        date_added = request.form.get('date_added', '').strip()
+        
+        validate_allergy(allergen, severity, date_added)
+        update_allergy(allergy_id, patient_id, allergen, severity, date_added)
+        flash('Allergy updated successfully', 'success')
+    except Exception as e:
+        flash(f'Failed to update allergy: {str(e)}', 'danger')
+    return redirect(url_for('edit_patient', patient_id=patient_id))
+
+@app.route('/delete-allergy/<int:patient_id>/<allergy_id>', methods=['POST'])
+@doctor_required
+def delete_allergy_route(patient_id, allergy_id):
+    try:
+        delete_allergy(allergy_id)
+        flash('Allergy deleted successfully', 'success')
+    except Exception as e:
+        flash(f'Failed to delete allergy: {str(e)}', 'danger')
+    return redirect(url_for('edit_patient', patient_id=patient_id))
+
+@app.route('/add-assessment/<int:patient_id>', methods=['POST'])
+@doctor_required
+def add_assessment(patient_id):
+    try:
+        hypertension = request.form.get('hypertension', '').strip()
+        ever_married = request.form.get('ever_married', '').strip()
+        work_type = request.form.get('work_type', '').strip()
+        residence_type = request.form.get('residence_type', '').strip()
+        avg_glucose_level = request.form.get('avg_glucose_level', '').strip()
+        bmi = request.form.get('bmi', '').strip()
+        smoking_status = request.form.get('smoking_status', '').strip()
+        stroke = request.form.get('stroke', '').strip()
+        
+        validate_assessment(hypertension, ever_married, work_type, residence_type, 
+                          avg_glucose_level, bmi, smoking_status, stroke)
+        create_assessment(patient_id, hypertension, ever_married, work_type, residence_type, 
+                        avg_glucose_level, bmi, smoking_status, stroke)
+        flash('Assessment added successfully', 'success')
+    except Exception as e:
+        flash(f'Failed to add assessment: {str(e)}', 'danger')
+    return redirect(url_for('edit_patient', patient_id=patient_id))
 
 @app.route('/logout')
 def logout():

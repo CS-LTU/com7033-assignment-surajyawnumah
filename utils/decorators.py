@@ -41,7 +41,7 @@ def doctor_required(f):
         
         role = get_user_role(session['user_id'])
         
-        if role not in ['doctor', 'admin']:
+        if role !='doctor':
             flash('Doctor access required', 'danger')
             return redirect(url_for('home'))
         return f(*args, **kwargs)
