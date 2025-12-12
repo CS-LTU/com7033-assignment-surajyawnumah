@@ -187,4 +187,4 @@ Add a LICENSE file to the repo (e.g., MIT) and reference it here.
 
 ## Author
 
-Suraj Yaw Numah (surajyawnumah)
+Suraj Yawnumah (surajyawnumah)
