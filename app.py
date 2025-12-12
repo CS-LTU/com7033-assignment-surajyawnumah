@@ -1,4 +1,5 @@
 from flask import render_template, Flask, request, flash, redirect, url_for, session
+from flask_wtf.csrf import CSRFProtect
 from models.user import User
 from models.patient import Patient
 from init_db import init_database
@@ -13,6 +14,9 @@ import re
 
 app = Flask(__name__)
 app.secret_key = Config.SECRET_KEY
+
+# Initialize CSRF protection
+csrf = CSRFProtect(app)
 
 init_database()
 
@@ -258,6 +262,11 @@ def logout():
     session.clear()
     flash('You have been logged out successfully', 'info')
     return redirect(url_for('login'))
+
+# Error handler for 404
+@app.errorhandler(404)
+def page_not_found(e):
+    return render_template('404.html'), 404
 
 # Main execution
 if __name__ == '__main__':

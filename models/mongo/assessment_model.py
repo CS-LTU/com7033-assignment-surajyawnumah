@@ -18,7 +18,7 @@ def get_assessments_by_patient_id(patient_id):
     client.close()
     return assessments
 
-def create_assessment(patient_id, hypertension, ever_married, work_type, residence_type, 
+def create_assessment(patient_id, hypertension, heart_disease, ever_married, work_type, residence_type, 
                      avg_glucose_level, bmi, smoking_status, stroke):
     client, coll = get_assessment_collection()
     if coll is None:
@@ -27,6 +27,7 @@ def create_assessment(patient_id, hypertension, ever_married, work_type, residen
     new_assessment = {
         "patient_id": int(patient_id),
         "hypertension": int(hypertension),
+        "heart_disease": int(heart_disease),
         "ever_married": ever_married,
         "work_type": work_type,
         "residence_type": residence_type,

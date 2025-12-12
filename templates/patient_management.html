@@ -185,6 +185,7 @@
           method="POST"
           style="display: inline"
         >
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       </div>
@@ -213,6 +214,7 @@
         <h5 class="modal-title" id="addPatientModalLabel">Add New Patient</h5>
       </div>
       <form method="POST" action="{{ url_for('add_patient') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="modal-body">
           <div class="row mb-3">
             <div class="col-md-6">

@@ -323,6 +323,7 @@
                 <h2 class="text-center mb-4">Welcome Back</h2>
                 <p class="text-center text-muted mb-4">Sign in to your account to continue</p>
                 <form method="POST" action="{{ url_for('login') }}" id="loginForm">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
                     <div class="form-group">
                         <div class="form-floating">
                             <input 

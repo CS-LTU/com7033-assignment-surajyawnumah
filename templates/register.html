@@ -366,6 +366,7 @@
       <h2 class="text-center mb-4">Sign Up</h2>
 
       <form id="signupForm" method="POST" action="{{ url_for('register') }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="row">
           <div class="col-md-6 mb-3">
             <div class="form-floating">

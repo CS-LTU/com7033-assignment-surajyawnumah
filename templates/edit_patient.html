@@ -98,6 +98,7 @@
         method="POST"
         action="{{ url_for('update_patient', patient_id=patient.id) }}"
       >
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="row">
           <div class="col-md-6 mb-3">
             <label for="firstName" class="form-label">First Name</label>
@@ -279,6 +280,7 @@
         <h5 class="modal-title">Edit Allergy</h5>
       </div>
       <form method="POST" action="{{ url_for('update_allergy_route', patient_id=patient.id, allergy_id=allergy._id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="modal-body">
           <div class="mb-3">
             <label for="allergen{{ allergy._id }}" class="form-label">Allergen <span class="text-danger">*</span></label>
@@ -319,6 +321,7 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
         <form action="{{ url_for('delete_allergy_route', patient_id=patient.id, allergy_id=allergy._id) }}" method="POST" style="display: inline;">
+          <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
           <button type="submit" class="btn btn-danger">Delete</button>
         </form>
       </div>
@@ -346,6 +349,7 @@
         <h5 class="modal-title" id="addAllergyModalLabel">Add Allergy</h5>
       </div>
       <form method="POST" action="{{ url_for('add_allergy', patient_id=patient.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="modal-body">
           <div class="mb-3">
             <label for="allergen" class="form-label"
@@ -417,6 +421,7 @@
         <h5 class="modal-title">New Assessment</h5>
       </div>
       <form method="POST" action="{{ url_for('add_assessment', patient_id=patient.id) }}">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
         <div class="modal-body">
           <div class="row">
             <div class="col-md-6 mb-3">
