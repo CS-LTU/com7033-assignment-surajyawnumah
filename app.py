@@ -101,7 +101,7 @@ def register():
             if not re.match(email_pattern, email):
                 raise ValueError('Please enter a valid email address') 
         
-            pattern = r'^(?=.[a-z])(?=.[A-Z])(?=.\d)(?=.\W).{8,}$'
+            pattern = r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*\W).{8,}$'
             if not re.match(pattern, password):
                 raise ValueError('Password must be 8+ chars and include upper, lower, digit and special char.')
 
