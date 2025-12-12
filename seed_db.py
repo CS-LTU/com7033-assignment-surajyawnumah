@@ -196,13 +196,13 @@ def run_seed_if_needed():
 
     print("[seed_data] No seed marker found, running full seed...")
 
-    # 1) Make sure core users exist in SQLite
+    # Make sure core users exist in SQLite
     seed_admin_and_doctor_users()
 
-    # 2) Seed patients in SQLite + assessments in MongoDB from CSV
+    # Seed patients in SQLite + assessments in MongoDB from CSV
     seed_patients_and_assessments_from_csv()
 
-    # 3) Create marker so this doesn't run again
+    # Create marker so this doesn't run again
     SEED_MARKER.write_text("done\n")
     print(f"[seed_data] Seeding complete. Marker created at {SEED_MARKER}")
 
