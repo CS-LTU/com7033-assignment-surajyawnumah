@@ -1,10 +1,5 @@
 # 🏥 COM7033 — Patient Management System
 
-[![CI](https://github.com/CS-LTU/com7033-assignment-surajyawnumah/actions/workflows/ci.yml/badge. svg)](https://github.com/CS-LTU/com7033-assignment-surajyawnumah/actions)
-[![Coverage](https://codecov.io/gh/CS-LTU/com7033-assignment-surajyawnumah/branch/main/graph/badge.svg)](https://codecov.io/gh/CS-LTU/com7033-assignment-surajyawnumah)
-[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue. svg)](https://www.python.org/downloads/)
-[![Flask](https://img.shields.io/badge/Flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
-[![License:  MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A comprehensive **Flask-based Patient Management System** developed for the COM7033 assignment at Leeds Trinity University. This application enables healthcare professionals to manage patient records, track allergies, and conduct health assessments with role-based access control. 
 
@@ -365,15 +360,6 @@ source .venv/bin/activate  # or Windows equivalent
 pip install -r requirements. txt
 ```
 
----
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
 
 ---
 
@@ -384,11 +370,6 @@ pip install -r requirements. txt
 
 ---
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
 
 ## 🙏 Acknowledgments
 
@@ -399,6 +380,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ---
 
-<p align="center">
-  Made with ❤️ for COM7033 Assignment
-</p>
+
