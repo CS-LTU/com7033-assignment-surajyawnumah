@@ -8,6 +8,8 @@ A comprehensive **Flask-based Patient Management System** developed for the COM7
 ## 📋 Table of Contents
 
 - [Features](#-features)
+- [Functional Requirements Implemented](#-functional-requirements-implemented)
+- [Security Requirements Implemented](#-security-requirements-implemented)
 - [Tech Stack](#-tech-stack)
 - [Project Structure](#-project-structure)
 - [Prerequisites](#-prerequisites)
@@ -55,7 +57,104 @@ A comprehensive **Flask-based Patient Management System** developed for the COM7
 
 ---
 
-## 🛠 Tech Stack
+## � Functional Requirements Implemented
+
+### User Management
+| Feature | Description | Location |
+|---------|-------------|----------|
+| User Registration | New users can register with email, password, and role selection | `/register` route in `app.py` |
+| User Login | Secure authentication with email and password | `/login` route in `app.py` |
+| User Logout | Session clearing and redirect to login | `/logout` route in `app.py` |
+| Role-Based Users | Two roles supported: `admin` and `doctor` | `models/user.py` |
+
+### Patient Management (SQLite - CRUD Operations)
+| Feature | Description | Access |
+|---------|-------------|--------|
+| View All Patients | List all patients in the system | Authenticated users |
+| Add Patient | Create new patient records | Admin only |
+| Edit Patient | Modify patient information | Doctor only |
+| Update Patient | Save changes to patient records | Doctor only |
+| Delete Patient | Remove patient from system | Admin only |
+
+### Allergy Management (MongoDB - CRUD Operations)
+| Feature | Description | Access |
+|---------|-------------|--------|
+| View Allergies | Display allergies for a patient | Doctor only |
+| Add Allergy | Record new allergy with severity | Doctor only |
+| Update Allergy | Modify allergy details | Doctor only |
+| Delete Allergy | Remove allergy record | Doctor only |
+
+### Assessment Management (MongoDB)
+| Feature | Description | Access |
+|---------|-------------|--------|
+| View Assessments | Display health assessments for a patient | Doctor only |
+| Add Assessment | Create stroke risk assessment with health metrics | Doctor only |
+
+### Database Integration
+| Database | Purpose | Data Stored |
+|----------|---------|-------------|
+| SQLite | Relational data | Users (authentication), Patients (demographics) |
+| MongoDB | Document data | Allergies (flexible schema), Assessments (health metrics) |
+
+---
+
+## 🔒 Security Requirements Implemented
+
+### 1. Authentication
+| Measure | Implementation | Location |
+|---------|----------------|----------|
+| Password Hashing | Werkzeug's `generate_password_hash()` with PBKDF2 | `models/user.py` |
+| Secure Verification | `check_password_hash()` for login | `models/user.py` |
+| Session Management | Flask session with `user_id` storage | `app.py` |
+
+### 2. Authorization (Role-Based Access Control)
+| Decorator | Purpose | Location |
+|-----------|---------|----------|
+| `@auth_required` | Requires any logged-in user | `utils/decorators.py` |
+| `@admin_required` | Restricts access to admin role only | `utils/decorators.py` |
+| `@doctor_required` | Restricts access to doctor role only | `utils/decorators.py` |
+
+### 3. CSRF Protection
+| Measure | Implementation | Location |
+|---------|----------------|----------|
+| Flask-WTF CSRFProtect | Global CSRF protection enabled | `app.py` |
+| CSRF Tokens | Hidden input fields in all POST forms | All template files |
+
+### 4. Input Validation & Sanitization
+| Validation | Rules | Location |
+|------------|-------|----------|
+| Email Format | Regex pattern `^[\w\.-]+@[\w\.-]+\.\w+$` | `app.py`, `utils/patient_utils.py` |
+| Password Complexity | 8+ chars, uppercase, lowercase, digit, special char | `app.py` |
+| Patient Data | Required fields, valid gender, age 0-120 | `utils/patient_utils.py` |
+| Allergy Data | Required allergen, valid severity (Mild/Moderate/Severe) | `utils/mongo_validation.py` |
+| Assessment Data | Valid ranges for glucose (0-300), BMI (10-100) | `utils/mongo_validation.py` |
+
+### 5. SQL Injection Prevention
+| Measure | Implementation | Location |
+|---------|----------------|----------|
+| Parameterized Queries | All SQL uses `?` placeholders | All database operations |
+
+### 6. Error Handling
+| Measure | Implementation | Location |
+|---------|----------------|----------|
+| Try-Except Blocks | All route handlers wrapped in error handling | `app.py` |
+| Custom 404 Page | User-friendly error page | `templates/404.html` |
+| Flash Messages | User feedback for success/failure | All routes |
+
+### Security Controls Summary
+```
+✅ Password Hashing (Werkzeug PBKDF2)
+✅ Session-Based Authentication
+✅ CSRF Protection (Flask-WTF)
+✅ Role-Based Access Control (RBAC)
+✅ Input Validation & Sanitization
+✅ SQL Injection Prevention (Parameterized Queries)
+✅ Custom Error Handling
+```
+
+---
+
+## �🛠 Tech Stack
 
 | Category | Technology |
 |----------|------------|
