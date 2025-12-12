@@ -1,190 +1,404 @@
-# COM7033 — Assignment (surajyawnumah)
+# 🏥 COM7033 — Patient Management System
 
-[![CI](https://github.com/CS-LTU/com7033-assignment-surajyawnumah/actions/workflows/ci.yml/badge.svg)](https://github.com/CS-LTU/com7033-assignment-surajyawnumah/actions)
+[![CI](https://github.com/CS-LTU/com7033-assignment-surajyawnumah/actions/workflows/ci.yml/badge. svg)](https://github.com/CS-LTU/com7033-assignment-surajyawnumah/actions)
 [![Coverage](https://codecov.io/gh/CS-LTU/com7033-assignment-surajyawnumah/branch/main/graph/badge.svg)](https://codecov.io/gh/CS-LTU/com7033-assignment-surajyawnumah)
+[![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue. svg)](https://www.python.org/downloads/)
+[![Flask](https://img.shields.io/badge/Flask-3.1.2-green.svg)](https://flask.palletsprojects.com/)
+[![License:  MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A small Flask-based application and supporting scripts for the COM7033 assignment. This repository includes the application entrypoint, database initialization and seeding scripts, a CSV dataset used for seeding, and helper/testing scripts.
+A comprehensive **Flask-based Patient Management System** developed for the COM7033 assignment at Leeds Trinity University. This application enables healthcare professionals to manage patient records, track allergies, and conduct health assessments with role-based access control. 
 
-## Contents
+---
 
-- app.py — Flask application (main entrypoint)
-- config.py — Configuration values used by the app
-- init_db.py — Initialize the project's database (create schema, tables)
-- seed_db.py — Seed the database using seeded_dataset.csv
-- seeded_dataset.csv — Dataset used to populate the database
-- requirements.txt — Python dependencies
-- test.py — Basic tests / example usage
-- models/ — ORM and Mongo models
-- templates/ — HTML templates for web views
-- utils/ — helper modules and utilities
+## 📋 Table of Contents
 
-## Features
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Project Structure](#-project-structure)
+- [Prerequisites](#-prerequisites)
+- [Installation](#-installation)
+- [Configuration](#-configuration)
+- [Database Setup](#-database-setup)
+- [Running the Application](#-running-the-application)
+- [API Endpoints](#-api-endpoints)
+- [User Roles & Permissions](#-user-roles--permissions)
+- [Testing](#-testing)
+- [Troubleshooting](#-troubleshooting)
+- [Contributing](#-contributing)
+- [Author](#-author)
+- [License](#-license)
 
-- Flask web application with user authentication (login/register)
-- Database initialization and seeding utilities
-- CSV dataset included to reproduce seeded data
-- Basic test / example script
+---
 
-## Tech stack
+## ✨ Features
 
-- Python 3.8+ (recommended)
-- Flask
-- SQLite for relational models (or configured DB in config.py)
-- MongoDB used for allergies/assessments models (see models.mongo)
-- Dependencies: see requirements.txt
+### Core Functionality
+- **User Authentication** — Secure login and registration system with password validation
+- **Patient Management** — Full CRUD operations for patient records
+- **Allergy Tracking** — Record and manage patient allergies with severity levels
+- **Health Assessments** — Comprehensive health assessment tracking including: 
+  - Hypertension status
+  - Marital status
+  - Work type classification
+  - Residence type
+  - Average glucose levels
+  - BMI tracking
+  - Smoking status
+  - Stroke risk assessment
 
-## Quickstart — Setup / Installation
+### Security Features
+- CSRF protection using Flask-WTF
+- Password strength validation (8+ characters with uppercase, lowercase, digit, and special character)
+- Session-based authentication
+- Role-based access control (RBAC)
 
-1. Clone the repository:
-   ```
-   git clone https://github.com/CS-LTU/com7033-assignment-surajyawnumah.git
-   cd com7033-assignment-surajyawnumah
-   ```
+### User Interface
+- Responsive HTML templates
+- Flash messaging for user feedback
+- Custom 404 error page
+- Clean navigation with base template inheritance
 
-2. Create and activate a virtual environment (recommended):
-   - macOS / Linux:
-     ```
-     python -m venv .venv
-     source .venv/bin/activate
-     ```
-   - Windows (PowerShell):
-     ```
-     python -m venv .venv
-     .\.venv\Scripts\Activate.ps1
-     ```
+---
 
-3. Install dependencies:
-   ```
-   pip install -r requirements.txt
-   ```
+## 🛠 Tech Stack
 
-4. Configure environment (if needed):
-   - Inspect `config.py` to set database URIs, SECRET_KEY, or other variables.
-   - For MongoDB-backed functionality, ensure Mongo is reachable and configured in `config.py` or your environment.
+| Category | Technology |
+|----------|------------|
+| **Backend Framework** | Flask 3.1.2 |
+| **Relational Database** | SQLite / SQLAlchemy 2.0.44 |
+| **NoSQL Database** | MongoDB (PyMongo 4.10.1) |
+| **Template Engine** | Jinja2 3.1.6 |
+| **Form Handling** | Flask-WTF 1.2.2, WTForms 3.2.1 |
+| **Authentication** | PyJWT 2.10.1, PyOTP 2.9.0 |
+| **Security** | Werkzeug 3.1.4 |
+| **Environment** | python-dotenv 1.2.1 |
 
-## Initialize and Seed the Database
+---
 
-1. Initialize the relational DB schema:
-   ```
-   python init_db.py
-   ```
+## 📁 Project Structure
 
-2. Seed the database with the provided CSV data:
-   ```
-   python seed_db.py
-   ```
-   The seeding script reads `seeded_dataset.csv` and inserts records into the database. Confirm the DB configuration in `config.py` before running.
-
-## Run the Application
-
-Run the Flask app locally:
 ```
+com7033-assignment-surajyawnumah/
+├── app.py                    # Main Flask application entry point
+├── config.py                 # Application configuration settings
+├── init_db.py                # Database initialization script
+├── seed_db.py                # Database seeding utility
+├── seeded_dataset.csv        # Sample dataset for seeding
+├── requirements.txt          # Python dependencies
+├── test. py                   # Test suite
+├── models/                   # Data models
+│   ├── user.py               # User model (SQLAlchemy)
+│   ├── patient.py            # Patient model (SQLAlchemy)
+│   └── mongo/                # MongoDB models
+│       ├── allergy_model.py  # Allergy model
+│       └── assessment_model.py # Assessment model
+├── templates/                # Jinja2 HTML templates
+│   ├── base.html             # Base template with common layout
+│   ├── home.html             # Landing page
+│   ├── about.html            # About page
+│   ├── login.html            # User login form
+│   ├── register.html         # User registration form
+│   ├── patient_management.html # Patient dashboard
+│   ├── edit_patient.html     # Patient edit view with allergies/assessments
+│   ├── flash. html            # Flash message component
+│   └── 404.html              # Custom error page
+└── utils/                    # Utility modules
+    ├── decorators.py         # Auth decorators (@auth_required, @admin_required, @doctor_required)
+    ├── patient_utils.py      # Patient validation helpers
+    └── mongo_validation.py   # MongoDB data validation
+```
+
+---
+
+## 📋 Prerequisites
+
+Before you begin, ensure you have the following installed: 
+
+- **Python 3.8+** — [Download Python](https://www.python.org/downloads/)
+- **pip** — Python package manager (included with Python)
+- **MongoDB** — [Download MongoDB](https://www.mongodb.com/try/download/community) (for allergy and assessment data)
+- **Git** — [Download Git](https://git-scm. com/downloads)
+
+---
+
+## 🚀 Installation
+
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/CS-LTU/com7033-assignment-surajyawnumah. git
+cd com7033-assignment-surajyawnumah
+```
+
+### 2. Create a Virtual Environment
+
+**macOS / Linux:**
+```bash
+python -m venv . venv
+source . venv/bin/activate
+```
+
+**Windows (PowerShell):**
+```powershell
+python -m venv .venv
+. \. venv\Scripts\Activate. ps1
+```
+
+**Windows (Command Prompt):**
+```cmd
+python -m venv .venv
+.\.venv\Scripts\activate. bat
+```
+
+### 3. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+---
+
+## ⚙️ Configuration
+
+### Environment Variables
+
+Create a `.env` file in the project root (recommended for secrets):
+
+```env
+SECRET_KEY=your-super-secret-key-here
+MONGO_URI=mongodb://localhost:27017/patient_management
+DATABASE_URL=sqlite: ///patients.db
+DEBUG=True
+```
+
+### Configuration File
+
+Review and modify `config.py` as needed:
+
+```python
+class Config:
+    SECRET_KEY = os. environ.get('SECRET_KEY') or 'your-fallback-secret-key'
+    MONGO_URI = os. environ.get('MONGO_URI') or 'mongodb://localhost:27017/patient_db'
+    # Additional configuration options...
+```
+
+> ⚠️ **Security Note:** Never commit secrets to version control.  Use environment variables for sensitive data.
+
+---
+
+## 🗄 Database Setup
+
+### 1. Start MongoDB
+
+Ensure MongoDB is running on your system:
+
+```bash
+# macOS (Homebrew)
+brew services start mongodb-community
+
+# Linux
+sudo systemctl start mongod
+
+# Windows
+net start MongoDB
+```
+
+### 2. Initialize the Relational Database
+
+```bash
+python init_db.py
+```
+
+This creates the SQLite database schema with the required tables for users and patients.
+
+### 3. Seed the Database (Optional)
+
+Populate the database with sample data from `seeded_dataset.csv`:
+
+```bash
+python seed_db. py
+```
+
+---
+
+## ▶️ Running the Application
+
+Start the Flask development server:
+
+```bash
 python app.py
 ```
-By default the app will run on the host/port configured in `app.py` (commonly http://127.0.0.1:5000). Open a browser at that address to interact with the HTML views.
 
-## Usage — concrete endpoint examples
+The application will be available at:  **http://127.0.0.1:8080**
 
-Below are concrete examples for the endpoints observed in the application entrypoint. Use these examples to exercise the application from the command line with curl. Replace host/port and payload values as appropriate.
+### Production Deployment
 
-- Home page (GET)
-  ```
-  curl -i http://127.0.0.1:5000/
-  ```
+For production, use a WSGI server like Gunicorn: 
 
-- About page (GET)
-  ```
-  curl -i http://127.0.0.1:5000/about
-  ```
-
-- Login (POST)
-  - Endpoint: `/login`
-  - Form fields: `email`, `password`
-  - Example:
-    ```
-    curl -i -c cookies.txt -X POST http://127.0.0.1:5000/login \
-      -d "email=alice@example.com" \
-      -d "password=SecretPassword123"
-    ```
-    Notes:
-    - Successful login sets a session cookie. The example stores cookies to `cookies.txt` so you can reuse the session on subsequent requests.
-    - On successful login the app redirects to a patient management page (in code it redirects to the route named `patient_managment`).
-
-- Register (POST)
-  - Endpoint: `/register`
-  - Form fields seen in the app: `first_name`, `last_name`, `email`, `password`, `confirm_password`, `role`
-  - Example:
-    ```
-    curl -i -c cookies.txt -X POST http://127.0.0.1:5000/register \
-      -d "first_name=Alice" \
-      -d "last_name=Smith" \
-      -d "email=alice@example.com" \
-      -d "password=SecretPassword123" \
-      -d "confirm_password=SecretPassword123" \
-      -d "role=doctor"
-    ```
-
-- Logout (likely)
-  - Many Flask apps include a logout route; if present it will be something like:
-    ```
-    curl -i -b cookies.txt http://127.0.0.1:5000/logout
-    ```
-    Check `app.py` for the exact route name.
-
-- Authenticated requests
-  - After logging in and storing the cookie (see `-c cookies.txt`), include the cookie for authenticated endpoints:
-    ```
-    curl -i -b cookies.txt http://127.0.0.1:5000/some-protected-route
-    ```
-
-- Patient / Allergy / Assessment functionality
-  - The code imports models and helpers for patients, allergies and assessments. Typical routes in this project will include patterns similar to:
-    - GET /patients
-    - GET /patients/<id>
-    - POST /patients (create)
-    - GET /patients/<id>/allergies
-    - POST /patients/<id>/allergies
-    - GET /patients/<id>/assessments
-    - POST /patients/<id>/assessments
-  - Please confirm exact route names in `app.py` before scripting automated calls.
-
-## Testing / Example script
-
-There is a `test.py` file included for basic smoke-tests / example usage. Run it like:
+```bash
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:8080 app:app
 ```
+
+---
+
+## 🔌 API Endpoints
+
+### Public Routes
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| `GET` | `/` | Home page |
+| `GET` | `/about` | About page |
+| `GET/POST` | `/login` | User login |
+| `GET/POST` | `/register` | User registration |
+| `GET` | `/logout` | User logout |
+
+### Protected Routes (Authentication Required)
+
+| Method | Endpoint | Description | Required Role |
+|--------|----------|-------------|---------------|
+| `GET` | `/patient-management` | Patient dashboard | Any authenticated user |
+| `POST` | `/add-patient` | Add new patient | Admin |
+| `GET` | `/edit-patient/<id>` | View/edit patient details | Doctor |
+| `POST` | `/update-patient/<id>` | Update patient info | Doctor |
+| `POST` | `/delete-patient/<id>` | Delete patient | Admin |
+| `POST` | `/add-allergy/<patient_id>` | Add patient allergy | Doctor |
+| `POST` | `/update-allergy/<patient_id>/<allergy_id>` | Update allergy | Doctor |
+| `POST` | `/delete-allergy/<patient_id>/<allergy_id>` | Delete allergy | Doctor |
+| `POST` | `/add-assessment/<patient_id>` | Add health assessment | Doctor |
+
+### Example API Calls
+
+**Login:**
+```bash
+curl -i -c cookies.txt -X POST http://127.0.0.1:8080/login \
+  -d "email=doctor@example.com" \
+  -d "password=SecurePass123!"
+```
+
+**Register a New User:**
+```bash
+curl -i -X POST http://127.0.0.1:8080/register \
+  -d "first_name=John" \
+  -d "last_name=Doe" \
+  -d "email=john.doe@example.com" \
+  -d "password=SecurePass123!" \
+  -d "confirm_password=SecurePass123!" \
+  -d "role=doctor"
+```
+
+**Access Protected Route (with session cookie):**
+```bash
+curl -i -b cookies.txt http://127.0.0.1:8080/patient-management
+```
+
+---
+
+## 👥 User Roles & Permissions
+
+| Role | Permissions |
+|------|-------------|
+| **Admin** | Full access:  Add, edit, delete patients; manage all records |
+| **Doctor** | View patients; edit patient details; manage allergies and assessments |
+| **User** | View patient management dashboard |
+
+### Role Decorators
+
+The application uses custom decorators for access control:
+
+- `@auth_required` — Requires any authenticated user
+- `@admin_required` — Requires admin role
+- `@doctor_required` — Requires doctor role
+
+---
+
+## 🧪 Testing
+
+Run the test suite: 
+
+```bash
 python test.py
 ```
-Adjust the script if your host/port or endpoints differ.
 
-## CI & Coverage badges
+For more comprehensive testing with pytest:
 
-- The badges at the top reference a GitHub Actions workflow and Codecov; to make them functional:
-  - Add the GitHub Actions workflow file `.github/workflows/ci.yml` (provided alongside this README).
-  - Configure Codecov: add codecov upload step in the CI and, if needed, repository token in repository settings.
-  - After CI runs and Codecov receives reports, the badges will reflect status.
+```bash
+pip install pytest pytest-cov
+pytest test. py -v --cov=. 
+```
 
-## Development notes & recommendations
+---
 
-- Keep `config.py` values that are secrets outside of source control. Use environment variables or a `.env` file with python-dotenv.
-- If using SQLite locally, add the DB file to `.gitignore`.
-- Add a `requirements-dev.txt` for testing/linting tools and a CI workflow that runs tests.
-- Consider adding OpenAPI documentation (Swagger) for the API endpoints to make usage explicit.
+## 🔧 Troubleshooting
 
-## Troubleshooting
+### Common Issues
 
-- Database connection errors: verify `config.py` values for database URIs and ensure the DB server is reachable.
-- Dependency issues: recreate the virtual environment and reinstall:
-  ```
-  rm -rf .venv
-  python -m venv .venv
-  source .venv/bin/activate
-  pip install -r requirements.txt
-  ```
+**1. Database Connection Errors**
+```bash
+# Verify MongoDB is running
+mongosh --eval "db.adminCommand('ping')"
 
-## License
+# Check SQLite file permissions
+ls -la *.db
+```
 
-Add a LICENSE file to the repo (e.g., MIT) and reference it here.
+**2. Module Not Found Errors**
+```bash
+# Reinstall dependencies
+pip install -r requirements.txt --force-reinstall
+```
 
-## Author
+**3. Port Already in Use**
+```bash
+# Use a different port
+python app.py  # Modify port in app.py, or: 
+flask run --port 5001
+```
 
-Suraj Yawnumah (surajyawnumah)
+**4. Virtual Environment Issues**
+```bash
+# Remove and recreate
+rm -rf .venv
+python -m venv .venv
+source .venv/bin/activate  # or Windows equivalent
+pip install -r requirements. txt
+```
+
+---
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 👤 Author
+
+**Suraj Yawnumah**
+- GitHub:  [@surajyawnumah](https://github.com/surajyawnumah)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Leeds Trinity University — COM7033 Module
+- Flask Documentation
+- MongoDB Documentation
+- SQLAlchemy Documentation
+
+---
+
+<p align="center">
+  Made with ❤️ for COM7033 Assignment
+</p>
