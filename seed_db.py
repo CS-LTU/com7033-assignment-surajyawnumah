@@ -1,5 +1,4 @@
 from init_db import init_database
-# seed_data.py
 import csv
 from pathlib import Path
 from datetime import datetime
@@ -8,10 +7,10 @@ from models.user import User
 from models.patient import Patient
 from models.mongo.assessment_model import create_assessment
 
-# Base directory (same folder as app.py / this file)
+# Base directory 
 BASE_DIR = Path(__file__).resolve().parent
 
-# CSV with your initial data
+# CSV with initial data
 CSV_PATH = BASE_DIR / "seeded_dataset.csv"
 
 # Marker file so the seed only runs once
@@ -32,7 +31,7 @@ def seed_admin_and_doctor_users():
             last_name="User",
             email=admin_email,
             role="admin",
-            password="Admin123!"  # DEV ONLY - change for production
+            password="Admin123!"  
         )
         print("[seed_data] Created default admin user")
 
@@ -42,7 +41,7 @@ def seed_admin_and_doctor_users():
             last_name="User",
             email=doctor_email,
             role="doctor",
-            password="Doctor123!"  # DEV ONLY - change for production
+            password="Doctor123!"  
         )
         print("[seed_data] Created default doctor user")
 
@@ -99,7 +98,7 @@ def seed_patients_and_assessments_from_csv():
     if not User.email_exists("admin@example.com"):
         print("[seed_data] Admin user not found, cannot seed patients.")
         return
-    created_by_user_id = 1  # Admin user created first in seed_admin_and_doctor_users()
+    created_by_user_id = 1  
 
     with CSV_PATH.open(newline="", encoding="utf-8") as f:
         reader = csv.DictReader(f)
@@ -112,20 +111,20 @@ def seed_patients_and_assessments_from_csv():
             return
 
         for row in reader:
-            # -------- PATIENT FIELDS (SQLite) --------
+            # PATIENT FIELDS (SQLite)
             first_name = (row.get("first_name") or "").strip()
             last_name = (row.get("last_name") or "").strip()
             email = (row.get("email") or "").strip()
             gender = (row.get("gender") or "").strip()
 
-            # Age might be a float in CSV, we convert to an approximate DOB.
+            # Convert age to an approximate DOB.
             age_str = (row.get("age") or "").strip()
-            date_of_birth = "1970-01-01"  # default fallback
+            date_of_birth = "1970-01-01"  #
 
             if age_str:
                 try:
                     age = int(float(age_str))
-                    # Rough DOB: current_year - age (dynamic)
+                    # Rough DOB: current_year - age 
                     approx_year = datetime.now().year - age
                     date_of_birth = f"{approx_year}-01-01"
                 except ValueError:
@@ -146,7 +145,7 @@ def seed_patients_and_assessments_from_csv():
                 print(f"[seed_data] Failed to create patient {email}: {e}")
                 continue
 
-            # -------- ASSESSMENT FIELDS (MongoDB) --------
+            # ASSESSMENT FIELDS (MongoDB) 
             hypertension = _parse_int(row.get("hypertension"), default=0)
             heart_disease = _parse_int(row.get("heart_disease"), default=0)
             ever_married = (row.get("ever_married") or "").strip()
@@ -164,8 +163,8 @@ def seed_patients_and_assessments_from_csv():
             smoking_status = (row.get("smoking_status") or "").strip()
             stroke = _parse_int(row.get("stroke"), default=0)
 
-            # This calls your existing Mongo helper, which casts to int/float again.
-            if patient_id:  # Only create assessment if patient was created successfully
+            
+            if patient_id:  
                 try:
                     create_assessment(
                         patient_id,
